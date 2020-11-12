@@ -4,15 +4,19 @@ export default function App() {
   const [sound, setSound] = useState("Drum Machine")
 
   const handleKeyDown = (event) => {
-    handlePress({ key: event.code.split("").pop() });
+    let key = event.code.split("").pop();
+    let sound = document.getElementById(key);
+    handlePress({ key: key, sound: sound });
   }
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-    return () => {document.removeEventListener("keydown", handleKeyDown)}
+    return () => { document.removeEventListener("keydown", handleKeyDown) }
   });
 
   const handlePress = (target) => {
+    target.sound.currentTime = 0;
+    target.sound.play();
     setSound(target.key);
   }
 
@@ -22,7 +26,7 @@ export default function App() {
         <p id="display">{sound}</p>
         {clips.map((element) => {
           return (
-            <DrumPad key={element.key} id={element.key} handlePress={handlePress} />
+            <DrumPad key={element.key} id={element.key} handlePress={handlePress} src={element.audioSource} />
           );
         })}
       </div>
@@ -33,11 +37,15 @@ export default function App() {
 export function DrumPad(props) {
 
   const handleClick = (event) => {
-    props.handlePress({ key: event.target.id });
+    let sound = document.getElementById(props.id);
+    props.handlePress({
+      key: event.target.id,
+      sound: sound
+    });
   }
 
   return (
-    <div id={props.id} className="drum-pad" onClick={handleClick}>
+    <div id={props.src.split("/").pop()} className="drum-pad" onClick={handleClick}>
       <audio src={props.src} className="clip" id={props.id}></audio>
       {props.id}
     </div>
