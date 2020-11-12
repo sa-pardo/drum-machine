@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import './index.css';
 
 export default function App() {
   const [sound, setSound] = useState("Drum Machine")
 
   const handleKeyDown = (event) => {
-    let key = event.code.split("").pop();
-    let sound = document.getElementById(key);
+    let sound = document.getElementById(event.code.split("").pop());
+    if (sound === null) {
+      return;
+    }
+    let key = sound.src.split("/").pop();
     handlePress({ key: key, sound: sound });
   }
 
@@ -24,11 +28,13 @@ export default function App() {
     <div id="app-container">
       <div id="drum-machine">
         <p id="display">{sound}</p>
-        {clips.map((element) => {
-          return (
-            <DrumPad key={element.key} id={element.key} handlePress={handlePress} src={element.audioSource} />
-          );
-        })}
+        <div class="pads-container">
+          {clips.map((element) => {
+            return (
+              <DrumPad key={element.key} id={element.key} handlePress={handlePress} src={element.audioSource} />
+            );
+          })}
+          </div>
       </div>
     </div>
   )
